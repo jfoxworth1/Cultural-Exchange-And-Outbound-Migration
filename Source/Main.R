@@ -17,3 +17,7 @@ rm(MIG_16092018154825543, files)
 
 # Return to WorkDir
 setwd(WorkDir)
+names(data_oecd)[1] <- "country_iso3"
+data_merged <- merge(data_oecd, data_presence) %>%
+  merge(data_abroad)
+
