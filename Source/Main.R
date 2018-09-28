@@ -13,7 +13,7 @@ for(i in seq_along(files)){
   object_name <- str_remove(files[i], ".csv")
   assign(object_name, read_csv(files[i]))
   tmp_names <- toupper(colnames(get(object_name)))
-  colnames(eval(parse(text = object_name))) <- tmp_names
+ # colnames(eval(parse(text = object_name))) <- tmp_names
 }
 data_oecd <- MIG_16092018154825543
 rm(MIG_16092018154825543, files)
@@ -28,7 +28,7 @@ names(data_oecd)[2] <- "nationality"
 data_joined <- right_join(data_oecd, data_abroad) 
 data_joined <- right_join(data_joined, data_presence)
 data_joined <- filter(data_joined, !is.na(VAR))
-data_joined <- filter(data_joined, )
+#data_joined <- filter(data_joined, )
 rm(data_abroad, data_ger, data_presence, data_oecd)
 
 # Build list of Countries
