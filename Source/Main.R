@@ -31,15 +31,16 @@ data_oecd <- select(data_oecd, -co2, -'country of birth/nationality', -var, -var
 # Based on Units
 data_abroad <- filter(data_abroad, data_abroad$country_iso3 %in% unique(data_oecd$country_iso3),
                       data_abroad$year >= min(data_oecd$year))
-data_unit_analysis <- right_join(data_oecd, data_abroad) 
+data_unit_analysis <- right_join(data_oecd, data_abroad)
+data_unit_analysis <- filter(data_unit_analysis, !is.na(data_unit_analysis$value))
 
 # Based on Presence
 data_presence <- filter(data_presence, data_presence$country_iso3 %in% unique(data_oecd$country_iso3),
                         data_presence$year >= min(data_oecd$year),
                         data_presence$open1 >= min(data_oecd$year))
 data_presence_analysis <- right_join(data_oecd, data_presence)
-# remove unused frames
+# remove unused data
 rm(data_abroad, data_ger, data_presence, data_oecd)
 
 # Units Analysis
-  
+early_value <- lm(value ~ units_sold + registrations +  exams, data = data_unit_analysis)
