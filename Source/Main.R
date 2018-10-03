@@ -23,17 +23,23 @@ setwd(WorkDir)
 # Data is the amount of germans that flow into other countries
 # Limit OECD data to necessary bits
 names(data_oecd)[7] <- "country_iso3"
-names(data_oecd)[2] <- "nationality" 
-data_oecd <- filter(data_oecd, nationality == "Germany")
+data_oecd <- filter(data_oecd, data_oecd$`country of birth/nationality` == "Germany")
 data_oecd <- filter(data_oecd, data_oecd$variable == "Inflows of foreign population by nationality")
+data_oecd <- select(data_oecd, -co2, -'country of birth/nationality', -var, -variable, -gen, -gender,-yea, -'flag codes', - flags)
 
-# Join all the data together
-data_joined <- right_join(data_oecd, data_abroad) 
-data_joined <- right_join(data_joined, data_presence)
-data_joined <- filter(data_joined, !is.na(var))
+# Create tables for the two different analysis
+# Based on Units
+data_abroad <- filter(data_abroad, data_abroad$country_iso3 %in% unique(data_oecd$country_iso3),
+                      data_abroad$year >= min(data_oecd$year))
+data_unit_analysis <- right_join(data_oecd, data_abroad) 
+
+# Based on Presence
+data_presence <- filter(data_presence, data_presence$country_iso3 %in% unique(data_oecd$country_iso3),
+                        data_presence$year >= min(data_oecd$year),
+                        data_presence$open1 >= min(data_oecd$year))
+data_presence_analysis <- right_join(data_oecd, data_presence)
+# remove unused frames
 rm(data_abroad, data_ger, data_presence, data_oecd)
 
-# Build list of Countries
-Countries <- unique(data_joined$country)
-Countries <- Countries[order(Countries)]
-
+# Units Analysis
+  
