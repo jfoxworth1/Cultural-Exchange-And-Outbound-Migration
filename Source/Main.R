@@ -87,7 +87,8 @@ data_presence_analysis <- right_join(data_oecd, data_presence)
 rm(data_abroad, data_ger, data_presence, data_oecd)
 
 # Units Analysis
-units_model <- lm(Migration_Value ~ units_sold + log(GDP_USD_CAP) + Germany_GDP_USD_CAP + Migrant_Employment_Rate + EU_Member, 
+units_model <- lm(Migration_Value ~ units_sold + log(GDP_USD_CAP) + Germany_GDP_USD_CAP 
+                  + Migrant_Employment_Rate + EU_Member + GI_Present + Language_Taught, 
                   data = data_unit_analysis)
 
 units_model_summary <- summary(units_model)
