@@ -44,11 +44,15 @@ data_oecd <- filter(data_oecd, data_oecd$`country of birth/nationality` == "Germ
 data_oecd <- filter(data_oecd, data_oecd$variable == "Inflows of foreign population by nationality")
 data_oecd <- select(data_oecd, -co2, -'country of birth/nationality', -var, -variable, -gen, -gender,-yea, -'flag codes', - flags)
 
+data_oecd <- cbind(data_oecd, rep(0, length(data_oecd[1]))) 
+names(data_oecd)[length(data_oecd)] <- "EU_Member"
+data_oecd$EU_Member[data_oecd$country_iso3 %in% EU_Countries$country_iso3] <- 1
+
 data_oecd <- right_join(OECD_GDP, data_oecd, by = c("country_iso3", "year"))
 data_oecd <- right_join(OECD_Migrant_Emplyment_Rates, data_oecd, by = c("country_iso3", "year"))
 data_oecd <- right_join(Germany_GDP, data_oecd, by = "year")
 
-rm(OECD_GDP, OECD_Migrant_Emplyment_Rates, Germany_GDP)
+rm(OECD_GDP, OECD_Migrant_Emplyment_Rates, Germany_GDP, EU_Countries)
 # Create tables for the two different analysis
 # Based on Units
 data_abroad <- filter(data_abroad, data_abroad$country_iso3 %in% unique(data_oecd$country_iso3),
@@ -64,8 +68,6 @@ data_presence_analysis <- right_join(data_oecd, data_presence)
 rm(data_abroad, data_ger, data_presence, data_oecd)
 
 # Units Analysis
-early_value <- lm(Migration_Value ~ units_sold + GDP_USD_CAP + Germany_GDP_USD_CAP + Migrant_Employment_Rate, data = data_unit_analysis)
-
 
 
 
