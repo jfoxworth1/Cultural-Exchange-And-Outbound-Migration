@@ -1,11 +1,12 @@
+# list important directories
+MainDir <- "/home/me/Documents/Uni-Jena/Thesis/Cultural-Exchange-And-Outbound-Migration/"
+WorkDir <- paste0(MainDir, "Source/")
+DataDir <- paste0(MainDir, "Data/")
+
 # List Dependencies
 require(tidyverse)
 require(tseries)
-
-# list important directories
-MainDir <- "/home/me/Documents/Uni-Jena/Thesis/Cultural-Exchange-And-Outbound-Migration/"
-WorkDir <- paste0(MainDir, "Source")
-DataDir <- paste0(MainDir, "Data")
+source(paste0(WorkDir, "is_open.R"))
 
 # download data into memory
 setwd(DataDir)
@@ -48,16 +49,22 @@ data_oecd <- cbind(data_oecd, rep(0, length(data_oecd[1])))
 names(data_oecd)[length(data_oecd)] <- "EU_Member"
 data_oecd$EU_Member[data_oecd$country_iso3 %in% EU_Countries$country_iso3] <- 1
 
+data_oecd <- cbind(data_oecd, rep(0, length(data_oecd[1]))) 
+names(data_oecd)[length(data_oecd)] <- "GI_Present"
+data_oecd$GI_Present[data_oecd$country_iso3 %in% unique(data_presence$country_iso3)] <- 1
+
+
 data_oecd <- right_join(OECD_GDP, data_oecd, by = c("country_iso3", "year"))
 data_oecd <- right_join(OECD_Migrant_Emplyment_Rates, data_oecd, by = c("country_iso3", "year"))
 data_oecd <- right_join(Germany_GDP, data_oecd, by = "year")
 
-rm(OECD_GDP, OECD_Migrant_Emplyment_Rates, Germany_GDP, EU_Countries)
+#rm(OECD_GDP, OECD_Migrant_Emplyment_Rates, Germany_GDP, EU_Countries)
 # Create tables for the two different analysis
 # Based on Units
 data_abroad <- filter(data_abroad, data_abroad$country_iso3 %in% unique(data_oecd$country_iso3),
                       data_abroad$year >= min(data_oecd$year))
-data_unit_analysis <- right_join(data_oecd, data_abroad, by = c("year", "country_iso3"))
+data_unit_analysis <- right_join(data_abroad, data_oecd, by = c("year", "country_iso3"))
+data_unit_analysis$units_sold[is.na(data_unit_analysis$units_sold)] <- 0
 
 # Based on Presence
 data_presence <- filter(data_presence, data_presence$country_iso3 %in% unique(data_oecd$country_iso3),
@@ -65,13 +72,13 @@ data_presence <- filter(data_presence, data_presence$country_iso3 %in% unique(da
                         data_presence$open1 >= min(data_oecd$year))
 data_presence_analysis <- right_join(data_oecd, data_presence)
 # Remove unused data
-rm(data_abroad, data_ger, data_presence, data_oecd)
+#rm(data_abroad, data_ger, data_presence, data_oecd)
 
 # Units Analysis
+units_model <- lm(Migration_Value ~ units_sold + log(GDP_USD_CAP) + Germany_GDP_USD_CAP + Migrant_Employment_Rate + EU_Member, 
+                  data = data_unit_analysis)
 
-
-
-
+units_model_summary <- summary(units_model)
 
 
 
