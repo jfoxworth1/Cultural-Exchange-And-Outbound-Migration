@@ -29,14 +29,14 @@ Germany_GDP <- filter(OECD_GDP, country_iso3 == "DEU")
 names(Germany_GDP)[3] <- "Germany_GDP_USD_CAP"
 Germany_GDP <- select(Germany_GDP, -country_iso3)
 
-OECD_Employment_Rates <- OECD_Employment_Rates[c(-6, -9,-15)]
-names(OECD_Employment_Rates)[1] <- "country_iso3"
-names(OECD_Employment_Rates)[6] <- "rate_code"
-names(OECD_Employment_Rates)[14] <- "Migrant_Employment_Rate"
-OECD_Employment_Rates <- filter(OECD_Employment_Rates, gender == "TOT",
+OECD_Migrant_Emplyment_Rates <- OECD_Migrant_Emplyment_Rates[c(-6, -9,-15)]
+names(OECD_Migrant_Emplyment_Rates)[1] <- "country_iso3"
+names(OECD_Migrant_Emplyment_Rates)[6] <- "rate_code"
+names(OECD_Migrant_Emplyment_Rates)[14] <- "Migrant_Employment_Rate"
+OECD_Migrant_Emplyment_Rates <- filter(OECD_Migrant_Emplyment_Rates, gender == "TOT",
                                 rate_code == "N_RATE",
                                 birth == "FB")
-OECD_Employment_Rates <- select(OECD_Employment_Rates, country_iso3, year, Migrant_Employment_Rate)
+OECD_Migrant_Emplyment_Rates <- select(OECD_Migrant_Emplyment_Rates, country_iso3, year, Migrant_Employment_Rate)
 
 names(data_oecd)[7] <- "country_iso3"
 names(data_oecd)[11] <- "Migration_Value"
@@ -45,10 +45,10 @@ data_oecd <- filter(data_oecd, data_oecd$variable == "Inflows of foreign populat
 data_oecd <- select(data_oecd, -co2, -'country of birth/nationality', -var, -variable, -gen, -gender,-yea, -'flag codes', - flags)
 
 data_oecd <- right_join(OECD_GDP, data_oecd, by = c("country_iso3", "year"))
-data_oecd <- right_join(OECD_Employment_Rates, data_oecd, by = c("country_iso3", "year"))
+data_oecd <- right_join(OECD_Migrant_Emplyment_Rates, data_oecd, by = c("country_iso3", "year"))
 data_oecd <- right_join(Germany_GDP, data_oecd, by = "year")
 
-rm(OECD_GDP, OECD_Employment_Rates, Germany_GDP)
+rm(OECD_GDP, OECD_Migrant_Emplyment_Rates, Germany_GDP)
 # Create tables for the two different analysis
 # Based on Units
 data_abroad <- filter(data_abroad, data_abroad$country_iso3 %in% unique(data_oecd$country_iso3),
