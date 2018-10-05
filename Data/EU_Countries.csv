@@ -1,29 +1,29 @@
-country_iso3, Country_name
-AUT, Austria
-BEL, Belgium
-BGR, Bulgaria
-HRV, Croatia
-CYP, Cyprus
-CZE, Czech Republic
-DNK, Denmark
-EST, Estonia
-FIN, Finland
-FRA, France
-DEU, Germany
-GRC, Greece
-HUN, Hungary
-IRL, Ireland
-ITA, Italy
-LVA, Latvia
-LTU, Lithuania
-LUX, Luxembourg
-MLT, Malta
-NLD, Netherlands
-POL, Poland
-PRT, Portugal
-ROU, Romania
-SVK, Slovakia
-SVN, Slovenia
-ESP, Spain
-SWE, Sweden
-GBR, United Kingdom
+country_iso3,country_name,year
+AUT, Austria,01.01.1995
+BEL, Belgium,01.01.1958
+BGR, Bulgaria,01.01.2007
+HRV, Croatia,01.07.2013
+CYP, Cyprus,01.05.2004
+CZE, Czech Republic,01.05.2004
+DNK, Denmark,01.01.1973
+EST, Estonia,01.05.2004
+FIN, Finland,01.01.1995
+FRA, France,01.01.1958
+DEU, Germany,01.01.1958
+GRC, Greece,01.01.1981
+HUN, Hungary,01.05.2004
+IRL, Ireland,01.01.1973
+ITA, Italy,01.01.1958
+LVA, Latvia,01.05.2004
+LTU, Lithuania,01.05.2004
+LUX, Luxembourg,01.01.1958
+MLT, Malta,01.05.2004
+NLD, Netherlands,01.01.1958
+POL, Poland,01.05.2004
+PRT, Portugal,01.01.1986
+ROU, Romania,01.01.2007
+SVK, Slovakia,01.05.2004
+SVN, Slovenia,01.05.2004
+ESP, Spain,01.01.1986
+SWE, Sweden,01.01.1995
+GBR, United Kingdom,01.01.1973

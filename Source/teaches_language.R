@@ -5,7 +5,7 @@ teaches_language <- function(country_iso3, year){
   if(!exists("data_presence")){
     if(exists("DataDir") && exists("WorkDir")){
       setwd(DataDir)
-      if(str_detect(list.files(pattern = ".csv$"), "data_presence.csv")){
+      if(Reduce("|", str_detect(list.files(pattern = ".csv$"), "data_presence.csv"))){
         data_presence <- read_csv("data_presence.csv")
         setwd(WorkDir)
       } else {
