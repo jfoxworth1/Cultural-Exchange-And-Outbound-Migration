@@ -9,6 +9,7 @@ require(tseries)
 source(paste0(WorkDir, "is_open.R"))
 source(paste0(WorkDir, "teaches_language.R"))
 source(paste0(WorkDir, "is_EU.R"))
+source(paste0(WorkDir, "to_country_code.R"))
 
 # download data into memory
 setwd(DataDir)
@@ -22,7 +23,21 @@ for(i in seq_along(files)){
 rm(files, tmp, object_name)
 setwd(WorkDir)
 
-# Combine Data about OECD countries and trim out unnecesary parts
+# Combine Data about OECD countries and trim out unn ecesary parts
+country_codes <- unique(select(Migration_Flow_DEMIG_Net, `country codes -un based-`,  countries))
+Migration_Flow_DEMIG_Net <- filter(Migration_Flow_DEMIG_Net, `country codes -un based-` == "DEU",
+                                   criterion == "COC",
+                                   `collection method` == "Population Register",
+                                   `coverage -citizens/foreigners/both-` != "Citizen",
+                                   gender == "Total"
+)
+country_iso3 <- vapply(Migration_Flow_DEMIG_Net$`reporting country`, to_country_code, character(1)) %>% unname()
+Migration_Flow_DEMIG_Net <- cbind(country_iso3, Migration_Flow_DEMIG_Net)
+Migration_Flow_DEMIG_Net <- filter(Migration_Flow_DEMIG_Net, country_iso3 != "NA")
+Migration_Flow_DEMIG_Net <- select(Migration_Flow_DEMIG_Net, country_iso3, year, value)
+rm(country_codes, country_iso3, Migration_Flow_DEMIG_Net)
+
+
 names(OECD_GDP)[1] <- "country_iso3"
 names(OECD_GDP)[6] <- "year" 
 names(OECD_GDP)[7] <- "GDP_USD_CAP"
@@ -82,28 +97,49 @@ data_oecd <- right_join(Germany_GDP, data_oecd, by = "year")
 data_oecd <- right_join(OECD_Population, data_oecd, by = c("country_iso3", "year"))
 
 # Garbage collection
-#rm(OECD_GDP, OECD_Employment, Germany_GDP, EU_Countries, OECD_Population)
+rm(OECD_GDP, OECD_Employment, OECD_Unemployment, Germany_GDP, EU_Countries, OECD_Population)
 # Create tables for the two different analysis
 # Based on Units
 data_abroad <- filter(data_abroad, data_abroad$country_iso3 %in% unique(data_oecd$country_iso3),
                       data_abroad$year >= min(data_oecd$year))
 data_unit_analysis <- right_join(data_abroad, data_oecd, by = c("year", "country_iso3"))
 data_unit_analysis$units_sold[is.na(data_unit_analysis$units_sold)] <- 0
+#data_unit_analysis$country_iso3 <- as_factor(data_unit_analysis$country_iso3)
+#data_unit_analysis$year <- as.Date(data_unit_analysis$year, "%YYYY")
 
 # Based on Presence
-data_presence <- filter(data_presence, data_presence$country_iso3 %in% unique(data_oecd$country_iso3),
-                        data_presence$year >= min(data_oecd$year))
-data_presence_analysis <- right_join(data_oecd, data_presence)
+# data_presence <- filter(data_presence, data_presence$country_iso3 %in% unique(data_oecd$country_iso3),
+#                         data_presence$year >= min(data_oecd$year))
+# data_presence_analysis <- right_join(data_oecd, data_presence)
 # Remove unused data
-#rm(data_abroad, data_ger, data_presence, data_oecd)
+rm(data_abroad, data_ger, data_presence, data_oecd)
 
+# QUESTION -> not sure if I should use the log of migration values or not since they are values and not a rate
+data_unit_analysis <- data_unit_analysis %>%
+  group_by(year) %>%
+  mutate(wmean_migration = weighted.mean(Migration_Value, Population_Value_Mil))
+data_unit_analysis <- data_unit_analysis %>%
+  group_by(year) %>%
+  mutate(wmean_units_sold = weighted.mean(units_sold, Population_Value_Mil))
 # Units Analysis
-units_model <- lm(Migration_Value ~ units_sold + log(GDP_USD_CAP) + EU_Member + Germany_GDP_USD_CAP 
-                  + log(Population_Value_Mil) + Unemployment_Rate + GI_Present + Language_Taught, 
-                  data = data_unit_analysis)
+
+
+units_model <- lm(Migration_Value ~ units_sold + factor(country_iso3) + factor(year) + factor(country_iso3):wmean_migration +
+                    factor(country_iso3):wmean_units_sold +    
+                    
+                    # controls
+                    log(GDP_USD_CAP) + EU_Member + Germany_GDP_USD_CAP + log(Population_Value_Mil) + Unemployment_Rate + 
+                    GI_Present + Language_Taught,
+                  
+                  data = data_unit_analysis, weights = Population_Value_Mil)  
+
+
+
+
 
 units_model_summary <- summary(units_model)
 print(units_model_summary)
+#rm(units_model, units_model_summary, data_presence_analysis, data_unit_analysis)
 
 
 # # Graph function
