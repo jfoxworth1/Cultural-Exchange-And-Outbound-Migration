@@ -1,0 +1,12 @@
+\contentsline {section}{\numberline {1}Introduction}{1}{section.1}
+\contentsline {subsection}{\numberline {1.1}Background}{1}{subsection.1.1}
+\contentsline {section}{\numberline {2}Micro Foundations}{2}{section.2}
+\contentsline {section}{\numberline {3}Data Sources}{2}{section.3}
+\contentsline {subsection}{\numberline {3.1}Dependent Variables: Migration}{2}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Independent Variable: Goethe Institute Units Sold}{3}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Independent Variable: Goethe Institute Openings}{4}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Independent Variable: Controls}{5}{subsection.3.4}
+\contentsline {section}{\numberline {4}Methodology}{5}{section.4}
+\contentsline {section}{\numberline {5}Results}{6}{section.5}
+\contentsline {section}{\numberline {6}Conclusions}{6}{section.6}
+\contentsline {section}{\numberline {7}References}{6}{section.7}
